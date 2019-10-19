@@ -1,0 +1,15 @@
+{
+    "name": "originphp/upgrade",
+    "description": "Upgrade plugin for OriginPHP",
+    "type": "origin-plugin",
+    "license": "MIT",
+    "require": {
+        "originphp/framework": "^2.0",
+        "originphp/filesystem": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Upgrade\\": "src/"
+        }
+    }
+}
