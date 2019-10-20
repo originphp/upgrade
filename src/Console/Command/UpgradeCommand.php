@@ -37,9 +37,9 @@ class UpgradeCommand extends Command
         'Origin\Utility\Html' => 'Origin\Html\Html',
         'Origin\Utility\Yaml' => 'Origin\Yaml\Yaml',
         'Origin\Utility\Markdown' => 'Origin\Markdown\Markdown',
-        'Origin\Inflector\Inflector' => 'Origin\Inflector\Inflector',
-        'Origin\Inflector\Security' => 'Origin\Security\Security',
-        'Origin\Inflector\Text' => 'Origin\Text\Text',
+        'Origin\Utility\Inflector' => 'Origin\Inflector\Inflector',
+        'Origin\Utility\Security' => 'Origin\Security\Security',
+        'Origin\Utility\Text' => 'Origin\Text\Text',
         
     ];
 
@@ -80,7 +80,7 @@ class UpgradeCommand extends Command
         'extends Behavior' => 'behaviors removed',
         'File::info' => 'changed result',
         'Use Origin\Log\Engine\BaseEngine' => 'changed return type',
-        '$this->assertStringContains(' => 'PHPUnit 8 deprecated',
+        '$this->assertContains(' => 'PHPUnit 8 wont accept string',
         'extends ApplicationMailer' => 'templates names and folder structure changed',
         'Inflector::add' => 'method removed',
         'SRC' => 'constant removed',
@@ -93,6 +93,7 @@ class UpgradeCommand extends Command
         'use Origin\Filesystem\Folder' => 'require through composer',
         'use Origin\Filesystem\File' => 'require through composer',
         'collection(' => 'require through composer',
+        '$this->runCommand' => 'changed return type'
         
     ];
 
@@ -119,7 +120,9 @@ class UpgradeCommand extends Command
         $this->find($this->find);
 
         $this->info('Other files that will contain settings');
-        $this->io->list(['config/.env.php','composer.json','config/application.php']);
+        $this->io->list([
+            'composer.json','config/.env.php','config/.env.php.default','config/application.php','config/routes.php'
+        ]);
     }
 
     protected function find(array $data)
