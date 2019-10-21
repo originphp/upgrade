@@ -87,11 +87,12 @@ class UpgradeCommand extends Command
         'parent::initialize(' => 'method removed in Framework classes',
         'use Origin\Collection\Collection' => 'require through composer',
         'use Origin\Csv\Csv' => 'require through composer',
-        'use Origin\Text\Text' => 'require through composer',
-        'use Origin\Markdown\Markdown' => 'require through composer',
-        'use Origin\Yaml\Yaml' => 'require through composer',
+        'use Origin\Dom\Dom' => 'require through composer',
         'use Origin\Filesystem\Folder' => 'require through composer',
         'use Origin\Filesystem\File' => 'require through composer',
+        'use Origin\Markdown\Markdown' => 'require through composer',
+        'use Origin\Text\Text' => 'require through composer',
+        'use Origin\Yaml\Yaml' => 'require through composer',
         'collection(' => 'require through composer',
         '$this->runCommand' => 'changed return type'
         
@@ -117,11 +118,15 @@ class UpgradeCommand extends Command
         $this->replace($this->namespaceChanges);
         $this->rename($this->renameClasses);
 
+        $this->out([
+            '<white>These items found need to be changed manually if they apply.</white>'
+        ]);
+
         $this->find($this->find);
 
         $this->info('Other files that will contain settings');
         $this->io->list([
-            'composer.json','config/.env.php','config/.env.php.default','config/application.php','config/routes.php'
+            'composer.json','config/.env.php','config/.env.php.default','config/application.php','config/routes.php','database/schema.php','database/seed.php'
         ]);
     }
 
