@@ -96,8 +96,10 @@ class UpgradeCommand extends Command
         'use Origin\Text\Text' => 'require through composer',
         'use Origin\Yaml\Yaml' => 'require through composer',
         'collection(' => 'require through composer',
+        'use Origin\Log\Engine\BaseEngine' => 'changed return type',
         '$this->runCommand' => 'changed return type',
-        'Origin\Email\Email' => 'features removed'
+        'Origin\Email\Email' => 'features removed',
+        'Text:random(' => 'method removed'
     ];
 
     protected function initialize() : void
