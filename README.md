@@ -37,3 +37,23 @@ $ bin/console upgrade --dry-run
 
 This will show you what it will change automatically and possible issues that need to be looked
 due to changes ( model callbacks, controller callbacks, composer dependencies, or public properties)
+
+8. Run
+
+This will run and make the changes it can, then it will list possible things which need your attention
+
+```linux
+$ bin/console upgrade
+```
+
+5. Settings
+
+The following files might custom settings that you need to copy over
+
+* composer.json
+* config/.env.php
+* config/.env.php.default
+* config/application.php
+* config/routes.php
+* database/schema.php
+* database/seed.php
