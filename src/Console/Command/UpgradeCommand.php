@@ -35,12 +35,14 @@ class UpgradeCommand extends Command
         'Origin\Utility\File' => 'Origin\Filesystem\File',
         'Origin\Utility\Folder' => 'Origin\Filesystem\Folder',
         'Origin\Utility\Html' => 'Origin\Html\Html',
+        'Origin\Utility\Http\Response' => 'Origin\HttpClient\Response',
+        'Origin\Utility\Http' => 'Origin\HttpClient\Http',
         'Origin\Utility\Yaml' => 'Origin\Yaml\Yaml',
         'Origin\Utility\Markdown' => 'Origin\Markdown\Markdown',
+        'Origin\Network\Socket' => 'Origin\Socket\Socket',
         'Origin\Utility\Inflector' => 'Origin\Inflector\Inflector',
         'Origin\Utility\Security' => 'Origin\Security\Security',
         'Origin\Utility\Text' => 'Origin\Text\Text',
-        
     ];
 
     /**
@@ -94,8 +96,8 @@ class UpgradeCommand extends Command
         'use Origin\Text\Text' => 'require through composer',
         'use Origin\Yaml\Yaml' => 'require through composer',
         'collection(' => 'require through composer',
-        '$this->runCommand' => 'changed return type'
-        
+        '$this->runCommand' => 'changed return type',
+        'Origin\Email\Email' => 'features removed'
     ];
 
     protected function initialize() : void
@@ -124,22 +126,44 @@ class UpgradeCommand extends Command
 
         $this->find($this->find);
 
-        $this->info('Other files that will contain settings');
+        $this->info('Settings');
+        $this->out([
+            '<white>The following files will have settings that you need to migrate to the new application. ',
+            'Routes can be copied directly, and you need to change migration table.</white>'
+        ]);
+
         $this->io->list([
             'composer.json','config/.env.php','config/.env.php.default','config/application.php','config/routes.php','database/schema.php','database/seed.php'
         ]);
     }
 
-    protected function find(array $data)
+    /**
+     * Finds a string in a file
+     *
+     * @param array $data
+     * @param array $options
+     * @return void
+     */
+    protected function find(array $data, array $options = [])
     {
+        $options += ['path' => [APP, TESTS. '/TestCase'],'class' => null,'extends' => null];
         $out = [];
-        foreach ([APP, TESTS. '/TestCase'] as $root) {
+        foreach ((array) $options['path'] as $root) {
             $files = Folder::list($root, ['recursive' => true]);
             foreach ($files as $item) {
                 $file = $item['path'] .'/' . $item['name'];
                 $extension = pathinfo($file, PATHINFO_EXTENSION);
                 $changes = [];
                 $contents = file_get_contents($file);
+
+                if ($options['class'] and strpos($contents, 'class ' . $options['class']) === false) {
+                    continue;
+                }
+
+                if ($options['extends'] and strpos($contents, ' extends ' . $options['extends']) === false) {
+                    continue;
+                }
+
                 if (in_array($extension, ['php','ctp'])) {
                     foreach ($data as $find => $replace) {
                         if (strpos($contents, $find) !== false) {
@@ -178,12 +202,14 @@ class UpgradeCommand extends Command
      * Renames files and then updates references to them
      *
      * @param array $files ['OldClass' => 'NewClass']
+     * @param array $options
      * @return void
      */
-    protected function rename(array $files) : void
+    protected function rename(array $files, array $options = []) : void
     {
+        $options += ['path' => [APP, TESTS. '/TestCase']];
         $out = [];
-        foreach ([APP,TESTS . '/TestCase'] as $root) {
+        foreach ((array) $options['path'] as $root) {
             $list = Folder::list($root, ['recursive' => true]);
             foreach ($list as $item) {
                 $file = $item['path'] .'/' . $item['name'];
@@ -218,20 +244,30 @@ class UpgradeCommand extends Command
     /**
      * Analyses files for find and replace
      *
-     * @param array $from
-     * @param string $to
+     * @param array $data
+     * @param array $options
      * @return void
      */
-    protected function replace(array $data) : void
+    protected function replace(array $data, array $options = []) : void
     {
+        $options += ['path' => [APP, TESTS. '/TestCase'],'class' => null,'extends' => null];
         $out = [];
-        foreach ([APP, TESTS. '/TestCase'] as $root) {
+        foreach ((array) $options['path'] as $root) {
             $files = Folder::list($root, ['recursive' => true]);
             foreach ($files as $item) {
                 $file = $item['path'] .'/' . $item['name'];
                 $extension = pathinfo($file, PATHINFO_EXTENSION);
                 $changes = [];
                 $contents = file_get_contents($file);
+
+                if ($options['class'] and strpos($contents, 'class ' . $options['class']) === false) {
+                    continue;
+                }
+
+                if ($options['extends'] and strpos($contents, ' extends ' . $options['extends']) === false) {
+                    continue;
+                }
+
                 if (in_array($extension, ['php','ctp'])) {
                     foreach ($data as $find => $replace) {
                         if (strpos($contents, $find) !== false) {
